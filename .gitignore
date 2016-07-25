@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 Robert\ Notes
+*.pdf
+*.doc
+*.html
