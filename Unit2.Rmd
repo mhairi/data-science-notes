@@ -1,0 +1,583 @@
+---
+title: 'Unit 2: Manipulating and Visulising Data in R'
+author: "Mhairi McNeill and Robert Raeside"
+date: "17 July 2016"
+output: word_document
+---
+
+In this unit we will be looking at wrangling data and visulising it. By the end of this unit you will become a skilled data craftsperson; able to switch between different formats of data and fix problems in data easily. You will also be an adept data artist; taking a raw table of numbers and creating beautiful graphs which allow yourselfs and others to fully understand the data.
+
+What I am calling data wrangling other people might call
+
+- data manipulation
+- data carperery
+- data munging
+- data proessing
+- data mining
+
+These are all approximatly the same thing. Different people may have slightly different interpretations of what each of those terms mean, but there is far from a strict defination of each currently. Basically, if you see those terms - particularly if you see them in a job advert - there is a good chance you'll have the skills described in that term by the end of this unit. 
+
+I'm splitting data wrangling into two main topics two mini topics. Each topic has it's own specialised R tool (known as a library). 
+
+The main topics are:
+
+1. Data manipulation using `dplyr`. This covers the main things we might want to 'do' to data; filtering down, aggreating, creating new derived variables, rearranging and combing datasets together. 
+
+2. Data cleaning using `tidyr`. Very few datasets come in exactly the way you might like. We will learn how to convert data into more readable forms, deal with missing data and arrange datasets so they are "tidy". We will be using a lot of `tidyr` but also will also be using some tools from `dplyr`. While we will cover this second, cleaning is the first process you will normally do when given a new dataset. Cleaning is very important but I think it's a little tricky to understand why we need to clean until you've done some manipulation, that why this comes second.
+
+The mini topics are both on working with particular types of data that can pose challenges! 
+
+1. Working with strings using `lubridate`. A string is just the computer programming way of saying a piece of text data. Text data can be a bit more akward than simple number data but we'll learn lots of ways of wrangling text into shape.
+
+2. Working with dates and times using `lubridate`. Time data does not immediatly seem that difficult, but you will soon discover there's a lot of tricky edge cases. Leap years, timezones and daylight saving time are just some of the more obvious examples.
+
+The second big topic we will cover is visulisation of data. I would put the visulisation of data very close to data manipulation in importance. Human brains find big spredsheets of numbers very difficult to processs and understand while we find pictorial representations of the same data very easy. 
+
+Some people (although I think this additute is becomming more uncommon) are slightly skeptical of data visulisation and see it us unscientific. While I am very keen on visuilsation has a very fundamental tool for working with data there is some truth to this idea. Firstly, it is important to confirm with summary statistics and statistical analysis intuations we get from data visulisations. Also, it is important to use the right kinds of visulisations that do not mislead us and others. 
+
+The primary goal of the data visulisation we will be covering is to make the data clear to you, the person doing the analysis. However, there is a secondarly goal which is to the data clear to other people. Data visulisation can be a very conviing tool for commuincating result to a range of people interested in your data. 
+
+We will only be using one tool `ggplot2` however, this is a huge and complex library, so they're will be plently to cover! This library takes a fairly unique way of looking at data visulsation and is good for both the exploratory quick plots we want for ourself and the more polished plots we might want to make for other people. 
+
+This unit will also aim to give you a good grounding in the R programming langauge. If this is your first time learning a programming language you may find find this unit a little bit tricker than other people who are used to working with programming tools. I have made an effort to make this unit approachable to people who have never used programming language like R and we will cover the basics in detail. Once you have finished this unit you will have the basics of programming under your belt, which is an enormously useful skill. Moving from R into another langauge is far simpler than starting a programming language from scratch and after this unit you will have some of the skills needed to learn any language. This opens up a huge number of tools and oppertunities to you, no matter what you do after this course! 
+
+
+### Order of Unit 1 and Unit 2
+
+This unit can be done simultaneously with the first unit. The first unit covers to statistics needed to make conclusions from data. What we will cover in this unit is less suited to making conclusions about the world as a whole. However, we will become very, very adept at making conclusions about the data we have. Clearly when these two skills are used in conjunction; being able to manipulate the given data and then use statistics to make conclusions from that data is a powerful combination. 
+
+Another way of looking at the difference between unit 1 and unit 2 is that unit 2 covers exploratory analysis and unit 1 covers confirmatory data analysis. You might use the tools we will cover in this unit to formulate questions. And then use the tools covered in unit 1 to answer those questions.
+ 
+The first unit also covers the very bare-bones of what is needed to do statistics in R. Because the units can be done in either order there is some repetition in the R content, particularly around basic reading and viewing data. If you are sure you learnt something before then feel free to skip it in this unit.
+
+
+
+## Loading in the data
+
+I'll start by explaining how to extract data from direct access. For a more detailed explanation see [our documentation](http://docs.deltadna.com/direct-sql-access/connecting-to-your-data-with-r/). I'll be using deltaCrunch in all my examples - if you have direct access you'll be able to access deltaCrunch's data. 
+
+If you don't have direct access I've included the data I've used as a csv file. Simple load the data into your R session using `data <- read.csv('currency_data.csv')`. This will work as long as your R script and your csv file are all in the same project. 
+
+First you'll need to install the RPostgreSQL package. R packages are collections of code that other people have written; the RPostgreSQL package is a set of code for connecting to PostgreSQL databases, like the direct access database. 
+
+
+## Dataframes
+
+So, the data is in 'data' and is loaded into the workspace. Let's look a little bit at how R stores the data. 
+
+The str (short for structure) function is one of Rs most useful functions. Let's check out the structure of 'data'.
+
+```{r}
+
+
+str(data)
+```
+
+So, the first thing it tells us is that 'data' is a data frame. This is R's default way of storing data and is a little like a table in SQL or a sheet in Excel.
+
+It tells us we have 13,554 observations of 5 variables and then it gives us a bit more information about each of those variables including the variable's name, it's type and the first few observations for that variable.
+
+We can see the data in more detail using View. This will bring up a separate window in R studio with the data in tabular form. 
+
+```{r}
+View(data)
+```
+
+## What is the average amount of currency spent? 
+
+Now we've got the data into R let's answer some questions we might have about the data. Each observation in this data set corresponds to one spend event. How much do people spend on average each time they spend?
+
+The information about the amount of money spent is contained in the variable spend_amount. We can acess just this variable out of our dataframe using $. Let's have a look at the structure of the spend_amount variable.
+
+```{r}
+str(data$spend_amount)
+```
+
+R has a whole bunch of inbuilt functions that let you do statistical operations on your data. We simply call one of these functions onto the spend_amount variable to get the mean amount spent per transaction and the median amount spent per transaction.
+
+```{r}
+mean(data$spend_amount)
+
+median(data$spend_amount)
+```
+
+## Basic dplyr 
+
+That's all the data manipulation that we're going to do using vanilla R. Now let's install and load the dplyr package. The name dplyr is a mixture of data frame and pliers. The idea being that this package is a multipurpose tool that lets you push and pull your data into any form you want. Start by installing dplyr  - if it's not already installed - and loading into the session.
+
+```{r, eval = FALSE}
+install.packages('dplyr')
+```
+```{r, results='hide'}
+library(dplyr)
+```
+
+A useful feature of dplyr is you can convert your data frames into tabular data frames. These are basically the same as data frames but you can view a quick summary of the data without using str. 
+
+```{r}
+data <- tbl_df(data)
+data
+```
+
+Data manipulation in  dplyr is done through five 'verbs' which can be stacked together to do almost any type of manipulation you want. 
+
+Each verb is simply a function that takes a data frame/tabular data frame as its first argument and returns a data frame/tabular data frame with some sort of manipulation performed on it. 
+
+If you want more information about any of these verbs (or any function in R) you can call the help file using `?`, for example, to see the help on select use `?select`.
+
+### Verb 1: Select
+Select returns a copy of the data frame with only the variables you ask for. Here we are asking for the time and the gender variables. 
+```{r}
+select(data, time, gender)
+```
+
+### Verb 2: Filter
+Filter returns the data frame with only the observations that meet the condition we ask for. Select and filter are similar expect select operates on variables and filter operates on observations.
+
+Here we are only returning observations were the the amount spent is greater than 999 cents. 
+```{r}
+filter(data, spend_amount > 999)
+```
+
+### Verb 3: Arrange
+Arrange reorders the observations in a data frame by the variable selected. Here we are ordering by time, so that the events that happened first are first in the data frame. 
+```{r}
+arrange(data, time)
+```
+
+### Verb 4: Mutate
+Mutate creates a new variable or changes an existing variable. You simply give the name of the new variable and a formula for calculating it in terms of the other variables. 
+
+In this example we are overwriting the spend_amount variable with the spend in dollars, rather than cents. 
+```{r}
+mutate(data, spend_amount = spend_amount/100)
+```
+
+### Verb 5: Summarise
+Summarise takes in a data frame and returns one number. It's similar to mutate expect mutate will return a data frame the same size as the original data frame while summarise will return a data frame of size one.
+
+In this example we do the same calculation as we did earlier - calculating the mean amount spent in each transaction and the median amount spent in each transaction. Summarise becomes very powerful when combined with group_by, as we shall see in the next section. 
+
+```{r}
+summarise(data, mean_spend   = mean(spend_amount),
+                median_spend = median(spend_amount))
+```
+
+## Is average spend different for different genders? 
+
+Now you understand the basics of dplyr we can start to answer some more interesting questions about the data. Let's try work out if the amount spent is different for different genders. 
+
+First we use mutate, to convert our spend into dollars. We save the output of this as data2 and then use group_by on data2. When you use the group_by function on a data set and then use summarise on it you will get a separate summarisation for each group. Since we are summarising by gender and there is three genders in the data set (female, male and unknown) then we will get a data set with three observations returned. Let's see this in action. 
+
+```{r}
+data2 <- mutate(data, spend_amount = spend_amount/100) # Change to dollars
+data3 <- group_by(data2, gender)                       # Group by gender
+data4 <- summarise(data3,                              # Summarise each group
+                   mean = mean(spend_amount),
+                   median = median(spend_amount),
+                   count = n())
+data4
+```
+
+
+## Now with piping! 
+
+So that worked pretty well but it's a bit annoying how we had to make all those temporary data sets: data2, data3 and data4. One of the most powerful features of dplyr is the pipe operator that lets us avoid temporary data and write code in a clear logical way. 
+
+To understand pipes lets look at a simple function in R - the identical function. This function just checks if its two arguments are the same:
+
+```{r}
+identical(4, 4)
+identical(5, 4)
+```
+
+We can perform exactly the same operation with a pipe %>%. All the pipe operator does is place the argument to the left of the operator as the first argument of the function of the right. So we can write the code above as:
+
+```{r}
+4 %>% identical(4)
+5 %>% identical(5)
+```
+
+For the identical function this doesn't make much sense. For data manipulation tasks this can be very useful. Data manipulation is often a series of operations that the data passes though until an output.
+
+The pipe operation works particularly well with dplyr since dplyr takes data frames as a first argument and returns data frames. That means we can rewrite our code which found the average spend for each gender as:
+
+```{r}
+data %>%
+  mutate(spend_amount = spend_amount/100) %>%
+  group_by(gender) %>%
+  summarise(mean = mean(spend_amount),
+            median = median(spend_amount),
+            count = n())
+```
+
+
+
+
+## Is this different for different age groups? 
+
+The best way to understand dplyr and piping data is to see some more examples. Here's a more complex one where we start by removing observations with unknown gender and age group. Also, we are going to group by both gender and age group; this gives as a data frame where we summarise by all combinations of gender and age group. 
+
+The ungroup function may seem a little mysterious. Using summarise removes one layer of grouping, so when we are grouping by only one variable it will remove the grouping. However, since we are grouping by two variables we need to remove the second grouping. It's a good idea to make sure the data sets you are working with don't have any grouping on them or you may get unexpected results. 
+
+To make this example easier to understand I'll show you the results of each verb and how the stack together. 
+
+The starting data:
+```{r}
+data
+```
+All observations with unknown gender are removed:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN')
+```
+All observations with unknown age group are removed:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN')
+```
+Change spend_amount to be in dollars:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN') %>%
+  mutate(spend_amount = spend_amount/100)
+```
+Add age and gender groupings to the data set
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN') %>%
+  mutate(spend_amount = spend_amount/100) %>%
+  group_by(age_group, gender)
+```
+Find the average spend amount and the number of observations for each gender:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN') %>%
+  mutate(spend_amount = spend_amount/100) %>%
+  group_by(age_group, gender) %>%
+  summarise(mean = mean(spend_amount),
+            median = median(spend_amount),
+            count = n())
+```
+Remove the extra grouping that still remains:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN') %>%
+  mutate(spend_amount = spend_amount/100) %>%
+  group_by(age_group, gender) %>%
+  summarise(mean = mean(spend_amount),
+            median = median(spend_amount),
+            count = n()) %>%
+  ungroup()
+```
+Order the data first by gender, then by age_group:
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>% 
+  filter(age_group != 'UNKNOWN') %>%
+  mutate(spend_amount = spend_amount/100) %>%
+  group_by(age_group, gender) %>%
+  summarise(mean = mean(spend_amount),
+            median = median(spend_amount),
+            count = n()) %>%
+  ungroup() %>%
+  arrange(gender, age_group)
+```
+
+
+
+## Does the amount people spend increase over time?
+
+Lets finish on a more complicated example.
+
+Here we group by on users, then arrange on time. This means that we have a grouped data frame where each group is in date order. We then use the row_number function. On grouped data this simply gives the order of each observation in the group. Since the groups are in time order this will number the first spend of a user as one, second spend as two, third spend as three etc. 
+
+Then we can get rid of the grouping and instead group by spend number. Using summarise we can calculate how much people spend on average at each spend number. Try running each line at a time to understand how this works. 
+
+```{r}
+data %>%
+  group_by(user_id) %>%
+  arrange(time) %>%
+  mutate(spend_number = row_number()) %>%
+  ungroup() %>%
+  group_by(spend_number) %>%
+  summarise(mean = mean(spend_amount),
+            median = median(spend_amount),
+            count = n())
+```
+
+
+
+# Making beautiful plots to understand your players
+
+Welcome to part two of a three part series on analysing your game data with R. If you've not read the first part in the series we recommend going back and reading that. This part will deal with making plots in R. In particular we will be learning how to use the ggplot2 library. 
+
+In the previous tutorial about data manipulation we hardly used any of R's in built data manipulation functions and again we'll do the same thing for plotting. The ggplot2 library makes plotting both very easy and returns rather nice looking results by default. For a little bit more effort you can customise the graphs it returns as well. Plotting is where R really comes into its own as an analysis tool. The graphics tools available can be used both for exploratory analysis and presentation worthy outputs. R can also make interactive visualisations though a variety of means. While I won't cover anything about interactive plots in this tutorial if you are interested I'd recommend looking at: ggvis, shiny and the range of htmlwidgets based libraries.  
+
+We'll use a different data set from the last blog. While the last blog was looking at monetisation here we'll look at play times. The query available here summarises our data to a user level. We've pulled out when each user started, when they last played, whats the highest level they've reached and some demographic information. Again the data is available to download as a csv file. 
+
+ Of course using a new library means installing that library, so start with:
+
+```{r, eval = FALSE}
+install.packages('ggplot2')
+```
+
+Here's what the data we are going to be working with looks like:
+
+```{r}
+data
+```
+
+## Dates and Times in R
+
+Before we start looking at plotting let's have a quick interlude to look at dealing with dates and times in R. 
+
+Install the lubridate library, which makes working with dates much easier.
+
+```{r, eval=FALSE}
+install.packages('lubridate')
+```
+```{r, warning=FALSE, message=FALSE}
+library(lubridate)
+```
+
+We extracted the start date of each player and the day they were last seen from the database. We are interested in working out how long our players have been playing for, so we want to know the difference between these two dates in days. To do this is we use %--% which finds the difference between two dates and %/% which is a kind of modular division for dates. The calculation `days_seen = date_difference %/% days(1)` finds the number of whole days between the two dates. 
+
+We then use the select verb with a negative sign which means select all variables *expect* this one.
+
+```{r}
+data <-
+mutate(data,
+       date_difference = start_date %--% last_seen,
+       days_seen       = date_difference %/% days(1)) %>%
+select(-date_difference) # We won't need this again, so we can drop it
+```
+
+# Play time vs. Level 
+
+In the last tutorial you learnt how to use the pipe operator (%>%) to connect functions. The ggplot library has a similar syntax where layers, aesthetics and themes are built up to create a plot using the + operator. 
+
+Below is the code to make a scatter plot of the number of days we've seen each person play against what level they've reached - I'll explain how it works soon. We can see from the scatter plot that clearly - and perhaps unsurprisingly - the longer a person plays for the higher a level they will get to.
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen, y = level) +
+  geom_point()
+```
+
+
+I'll talk you though what each function does in the plot above. This method of plotting can seem a bit abstract at first. It also probably seems a bit over-complicated for making a simple scatter plot but learning the ggplot system makes making complicated graphics much easier.  
+
+```{r, eval = FALSE}
+ggplot(data)
+```
+All ggplots start with the ggplot function. The first argument is the data frame we are going to plot elements from. If you want to plot vectors not included in a data frame you can set this first argument to NULL. 
+
+```{r, eval = FALSE}
+aes(x = days_seen, y = level)
+```
+Here we introduce the variables that we want to plot. The letters aes stand for aesthetics - these are the elements of the plot which depend on data. Some elements of the plots will depend on the data and some will be fixed. Clearly the x and y position of the points will depend on the data. Colour is a good example of an element of the plot which can either be fixed or depend on the data; we can either colour the whole plot the same colour and we can colour points depending on some value. We'll see an example of this in a minute.  
+
+```{r, eval = FALSE}
+geom_point()
+```
+Now we are telling ggplot that we want this plot to be a made of points i.e. a scatter plot. We could have used a different geom to plot this data in a different way. For example here's the plot with a line geom instead:
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen, y = level) +
+  geom_line()
+```
+
+But, clearly a line graph is really the wrong sort of graph for this data. Different geoms use elements passed from aes in different ways. Read the documentation for the geom you are using to understand which aesthetics it requires. 
+
+### Adding colour, transparency and facets
+
+Lets put some colour and transparency into the plot. Since we want all points to have the same colour and transparency we do not use aes. Just include colour and transparency (called alpha in ggplot) into the geom function. 
+
+Colour can be hex colours or one of the named colours seen [here](http://sape.inf.usi.ch/quick-reference/ggplot2/colour). You can spell it as either colour or color. I like pink and I'm British so I've used `colour = 'deeppink3'`. Transparency can be a very useful plotting element. Adding transparency we can now see that there's a lot more players in the bottom left of the plot than in the top right. 
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen, y = level) +
+  geom_point(colour = 'deeppink3', alpha = 0.2)
+```
+
+Now we've seen colour as a fixed value lets see it used as an aesthetic. We've set colour to be equal to gender. We need to do this inside aes since we are mapping and element of the data (gender) onto an element of the plot (colour). Now the plot will colour different points depending on the gender variable.  
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen, y = level, colour = gender) +
+  geom_point()
+```
+
+Interesting! It seems like there might be a difference in final level reached for males and females. Let's investigate the age_group variable and see if there is any differences between different age groups. We want to do this while still being able to see the gender difference and see if it is different in different age groups. To examine age and gender at the same time you could try mapping age group to a different aesthetic - maybe size of points, or the transparency of points. However, I think that would be a little difficult to interpret. Instead lets make a new plot for each age group. 
+
+This is very easy to do in ggplot using facet_grid. This will make a grid of plots where each plot contains a subset of data corresponding to the faceting variable.
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen, y = level, colour = gender) +
+  geom_point() +
+  facet_grid(~ age_group)
+```
+
+I don't see any clear differences between different age groups. Although, we can see that all the players of unknown gender also have unknown age group. Let's now do some bar charts to investigate further. 
+
+# How long do people play for? 
+
+Let's just look at the length of time people play for. It seems from the scatter plots we just made that this might be different for different genders and for different age groups. We can also look at a new geom, geom_bar, and look at how the same geom treats different types of data differently.
+
+First let's plot a histogram of the length of times people play for, to understand how it is distributed. 
+
+We only need one aesthetic, since we are only plotting one variable and let's use geom_bar, which gives us both bar charts and histograms. 
+
+```{r}
+ggplot(data) +
+  aes(x = days_seen) +
+  geom_bar()
+```
+
+So days_seen is very right skew. Most players play for a short time and a small number of players play for a long time. Let's split days_seen into groups - that should be easier to understand. We can use the cut function to turn a continuous variable like days_seen into a factor. Factors are a special R data type for variables which take on only certain discrete values. For example the age group and the gender variables that we've been working with are factors. 
+ 
+
+```{r}
+data <-
+data %>%
+  mutate(days_seen_group = cut(days_seen, breaks= c(-1, 0, 5, 10, 100, 500)))
+```
+
+We have set breaks to `c(-1, 0, 5, 10, 100, 500)`, this will give us 5 groups: first between -1 and 0, then between 0 and 5, then between 5 and 10, then between 10 and 100 and finally between 100 and 500. I set the first group to be -1 to 0 since this will catch all values which are 0. I was careful to ensure that the top value in breaks was greater that the maximum value in the data so that every data point will fall into a grouping. 
+
+There's a few other ways of setting groupings when using cut. See `?cut` for details.
+
+Okay, now that we've got a new factor variable let's plot this in a bar chart to understand how many people fall into each group. Note that this is almost exactly the same syntax as the first geom_bar we made expect we are using the new factor variable instead of the old continuous variable.
+```{r}
+ggplot(data) +
+  aes(x = days_seen_group) +
+  geom_bar()
+```
+
+Now we have a bar plot - note that there is space between the bars. The ggplot2 library knows the difference between categorical variables and continuous variables and can make plots that suit each type. 
+
+Now that you've learnt how to make bar plots let's try understand the difference between the genders using them. I've used dplyr to pipe a data frame without the unknown genders into ggplot, so we'll only look at the difference between males and females. Note for bar charts we use fill rather than colour. For geom_bar colour controls the colour of the line around the bar. 
+
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>%
+ggplot() +
+  aes(x = days_seen_group, fill = gender) +
+  geom_bar()
+```
+
+I find this chart with the bars stacked a little hard to interpret. Let's try it with the male and female bars placed side by side. To do this we need to change the position to 'dodge' in geom_bar.
+
+```{r}
+data %>%
+  filter(gender != 'UNKNOWN') %>%
+ggplot() +
+  aes(x = days_seen_group, fill = gender) +
+  geom_bar(position = 'dodge') 
+```
+
+This makes it clear that there's much more females than males who've been playing more than 100 days. 
+
+Now let's look at age group. 
+```{r}
+data %>%
+  filter(age_group != 'UNKNOWN') %>%
+ggplot() +
+  aes(x = days_seen_group, fill = age_group) +
+  geom_bar()
+```
+
+The age group plot looks pretty but it's hard to tell if the proportions in each age group are different in different days played groups. We can set the position to fill to get a comparison of proportions. 
+
+```{r}
+data %>%
+  filter(age_group != 'UNKNOWN') %>%
+ggplot() +
+  aes(x = days_seen_group, fill = age_group) +
+  geom_bar(position = 'fill')
+```
+
+Seems to be pretty much the same proportion to me. Different geoms have different options for position, check out the help files to find more options for plotting. You might need to play around with graphs a bit to find the clearest or most persuasive way of presenting your data.  
+
+## Heatplots and more complicated graphs
+
+I'll finish this tutorial with a more complicated graph. I'll also go into a bit of detail about customising graphics in ggplot. 
+
+I wanted to present a lot of information about the final level reached in one graph and I want it to look good so I can show everyone what I've found. I decided to make a heat plot, where the colour would correspond to the final level people reach. 
+
+This requires a bit more data preparation than the other graphs - we'll need to find  the number average level that players reach in age group and for each gender. I also decided to remove all users who have played recently - they are probably still playing and could reach higher levels in the future. If you are familiar with dplyr the code below should make sense.
+
+```{r}
+plot_data <-
+data %>%
+  filter(last_seen < today() - days(7)) %>% 
+  filter(gender != 'UNKNOWN') %>%
+  filter(age_group != 'UNKNOWN') %>%
+  group_by(gender, age_group) %>%
+  summarise(average_level = mean(level)) %>%
+  ungroup()
+```
+
+Now we can plot this data. To make a heat plot the geom we want is geom_raster. The graph is plotting three variables: gender and age_group which are displayed as boxes along the y axis and x axis. The fill is the average level that we calculated earlier. 
+
+```{r}
+ggplot(plot_data) + 
+  aes(y = gender, x = age_group, fill = average_level) +
+  geom_raster() 
+```
+
+Looks okay, but theirs a few things I want to do to make it better. First, let's label each square in the heat map with the actual value of average_level. For the labels we want the numbers rounded to one decimal place and they need to be character variables for geom_text to plot them.
+
+```{r}
+plot_data$label <- plot_data$average_level %>% round(1) %>% as.character
+```
+
+We also want a different colour scheme. The RColorBrewer package has some nice colour schemes for expressing variables. So, let's install it and load it in.
+
+```{r, eval = FALSE}
+install.packages('RColorBrewer')
+```
+```{r, warning = FALSE}
+library(RColorBrewer)
+```
+
+Now we can build our plot up in layers. Note that this plot has two geoms - geom_raster and geom_text. Geoms added later will lie on top of geoms added earlier; if we had put geom_text before geom_raster then geom_text would be hidden by the coloured boxes. These geoms both take their aesthetics from the first aes function, however if you wanted to add different aesthetics or even different data to different geoms in the same plot you could do that - you just need to specify it inside the geom function. Any added aesthetics need to be wrapped in the aes function to discriminate them from fixed elements.
+
+The scale_fill_distiller function comes from from the colour brewer package and adds the new colour scale. There is a range of functions that act on either fill or colour and on factor or continuous variables (brewer for factor variables, distiller for continuous variables). I've used a diverging colour scheme to highlight the differences between males and females. You should try experimenting with different pallets and types. 
+
+I have changed the default x and y labels. You can use the newline character '\\n' in labels to format them the way you want or add space. 
+
+Lastly I have changed the theme from the default ggplot theme. It's hard to see the full effect of the new theme in this plot but you can see the background is now white rather than grey. For more themes try the ggthemes package, or try writing your own themes.  
+
+```{r}
+ggplot(plot_data) + 
+  aes(y = gender, x = age_group, fill = average_level, label = label) +
+  geom_raster() +
+  geom_text(colour = 'white',
+            size = 8) +
+  scale_fill_distiller(name = 'Average\nFinal\nLevel',
+                       type = 'div',
+                       palette = 3) +
+  xlab('\nAge Group') +
+  ylab('Gender') +
+  theme_bw()
+```
+
+This really only scratches the surface of what you can do with ggplot and the range of plotting options that our out there. I have found the [ggplot cheatsheet](file:///C:/Users/Mhairi/Downloads/ggplot2-cheatsheet%20(15).pdf) very useful, as well as the R Graphics Cookbook by Winston Chang. 
+
+
+
+
+
+
+
+

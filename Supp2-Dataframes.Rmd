@@ -1,0 +1,104 @@
+---
+title: 'Supplament 2: Dataframes'
+author: "Mhairi McNeill and Robert Raeside"
+date: "25 July 2016"
+output: html_document
+---
+
+# Dataframes in R
+
+Throughout this unit we have been using the spinach survey data very frequently. It might make sense to keep all this data together in one R object. After all, the spinach rating, and the heights and the chocolate ratings all come from the same people. So it probably makes sense to have this data linked together somehow. 
+
+In R we can link several vectors together by using a *dataframe*. This is very useful when we have data in the form of multiple variables of certain observations. In our spinach data each observation is a survey respondent, and each variable is some fact about them. 
+
+To link data together we use the function `data.frame`. This takes in multiple vectors of data and converts them into a special data frame object:
+
+```{r}
+height <- c(133, 110, 224, 134, 135, 136, 125, 137, 104, 132, 114, 130, 129, 237, 131)
+spinach_rating <- c(0,  1, -3,  0, -2,  0, -3,  1,  0, -3, -3,  3,  3,  0,  2)
+chocolate_rating <- c(3, 3, 0, 3, -3, 3, 0, 2, 2, 2, 3, 3, 2, 3, 1)
+
+data.frame(height, spinach_rating, chocolate_rating)
+```
+
+Let's give this object a name, so that we can easily access it later. It is a good idea to give dataframes descriptive names like `rating_and_height_data` or `spinach_data`. However, if you are only going to be working with one dataframe it's fine to call it `df` (short for data-frame) because it saves typing.
+
+```{r}
+df <- data.frame(height, spinach_rating, chocolate_rating)
+```
+
+All the vectors being linked together must be the same length. Dataframes are primary used for linking observation/variable data together. In this situation it doesn't make sense to have a different number of observations for different variables.
+
+## Working with dataframes
+
+If we want to access the individual vectors in a dataframe we need to tell R where that vector is (it's inside a dataframe). We do this using the `$` operator. 
+
+```{r}
+df$height
+```
+
+`df$heigth` means the vector named `height` inside the dataframe `df`. Every time you use the height vector you will need to use `df$height`. For example:
+
+```{r}
+hist(df$height)
+```
+
+Keeping objects in dataframes and accessing them using `$` does seem awkward at first. However, it is often useful in the long run for three reasons:
+
+  1. You will often be working with multiple datasets at the same time it can get confusing working out which dataset each variable is associated with.
+  
+  2. Later we be learning about some R libraries (dplyr and ggplot2) which are designed to work well with dataframes. You really need to have your data in dataframes to use these libraries effectively and in turn they make working with dataframes easier. 
+  
+  3. Most data gets read into R in the form of a dataframe.
+  
+If we want to add an extra vector to our dataframe we can just assign to a name in that dataframe directly. 
+
+```{r}
+df$age <- c("Adult", "Child", "Adult", "Adult", "Child", "Adult", "Child", 
+         "Adult", "Child", "Child", "Child", "Adult", "Adult", "Adult", 
+         "Adult")
+```
+
+Deleting a vector from a data frame can just be done by setting the vector to null.
+
+```{r}
+df$age <- NULL
+```
+
+A very useful function in R is `str`. It gives you a string representation of what is in an object. Using it on a dataframe will give you a compact description of all the vectors in that dataframe.
+
+```{r}
+str(df)
+```
+
+The 'Environment' panel on the top right in RStudio will also give you the descriptions from `str` if you click on the triangle next to a dataframe. You can also view the entire dataframe by using `View` (or by clicking on the name of a dataframe in the Environment panel). This is useful if you are familiar with working in Excel, and like to be able to see the data you are working with.
+
+```{r}
+View(df)
+```
+
+Unlike Excel you cannot edit a file from the view mode - although this is a good thing because you can't accidently mess up for data! 
+
+## Reading external data
+  
+Almost all data you work with in R will be read in from an external file (typing out all your data into vectors get difficult very quickly!). We will now read in an extended version of our spinach data. We will be using this data throughout the rest of the unit.
+
+The file is in the form of a CSV (comma separated value file). This is the most common form of text data, and is a very good choice saving data. If you open up the data in a text editor you will be able to see that each variable is separated by a comma and each new observation goes on a new row. This form of data is easy for lots of different programs to use so makes it a very good choice when you need to store data. 
+
+To read in a CSV file just use the R function `read.csv`. You will need to find where your CSV file is stored on your computer and copy the file path (don't worry if you are struggling to find the file path, we will cover an easier way soon). 
+
+```{r, eval = FALSE}
+df <- read.csv('C://path//to//data//spinich_data.csv')
+```
+
+Having to type out the full path to your data gets tedious very quickly. It also makes it more difficult to share your work, because other people will have a different path to their data, so will need to manually edit all file paths.
+
+A good solution is to use projects inside RStudio. For each project RStudio creates a little file that tells RStudio that all the code and data we need is contained in one folder. Creating one is easy. Make sure you have the code and the csv file in the same folder in your computer. I'd recommend making a new folder with just those two files. Then in RStudio go to 'File', then 'New Project...'. Chose the make a project in an existing directory and chose the location of the directory with your code and spinach data file.
+
+Now when you want to read in the data RStudio knows that the data is in the same place as your code and this will work:
+
+```{r}
+df <- read.csv('spinach_data.csv')
+```
+
+Also, the 'Files' window in the bottom right in RStudio will now show you all the files you have in your project's folder. 
