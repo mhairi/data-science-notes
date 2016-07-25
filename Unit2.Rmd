@@ -42,46 +42,12 @@ We will only be using one tool `ggplot2` however, this is a huge and complex lib
 This unit will also aim to give you a good grounding in the R programming langauge. If this is your first time learning a programming language you may find find this unit a little bit tricker than other people who are used to working with programming tools. I have made an effort to make this unit approachable to people who have never used programming language like R and we will cover the basics in detail. Once you have finished this unit you will have the basics of programming under your belt, which is an enormously useful skill. Moving from R into another langauge is far simpler than starting a programming language from scratch and after this unit you will have some of the skills needed to learn any language. This opens up a huge number of tools and oppertunities to you, no matter what you do after this course! 
 
 
-### Order of Unit 1 and Unit 2
+### Difference between unit 1 and 2
 
-This unit can be done simultaneously with the first unit. The first unit covers to statistics needed to make conclusions from data. What we will cover in this unit is less suited to making conclusions about the world as a whole. However, we will become very, very adept at making conclusions about the data we have. Clearly when these two skills are used in conjunction; being able to manipulate the given data and then use statistics to make conclusions from that data is a powerful combination. 
+As was mentioned in the first unit, units one and two can be done symaltenously. The first unit covers to statistics needed to make conclusions from data. What we will cover in this unit is less suited to making conclusions about the world as a whole. However, we will become very, very adept at making conclusions about the data we have. Clearly when these two skills are used in conjunction; being able to manipulate the given data and then use statistics to make conclusions from that data is a powerful combination. 
 
 Another way of looking at the difference between unit 1 and unit 2 is that unit 2 covers exploratory analysis and unit 1 covers confirmatory data analysis. You might use the tools we will cover in this unit to formulate questions. And then use the tools covered in unit 1 to answer those questions.
- 
-The first unit also covers the very bare-bones of what is needed to do statistics in R. Because the units can be done in either order there is some repetition in the R content, particularly around basic reading and viewing data. If you are sure you learnt something before then feel free to skip it in this unit.
 
-
-
-## Loading in the data
-
-I'll start by explaining how to extract data from direct access. For a more detailed explanation see [our documentation](http://docs.deltadna.com/direct-sql-access/connecting-to-your-data-with-r/). I'll be using deltaCrunch in all my examples - if you have direct access you'll be able to access deltaCrunch's data. 
-
-If you don't have direct access I've included the data I've used as a csv file. Simple load the data into your R session using `data <- read.csv('currency_data.csv')`. This will work as long as your R script and your csv file are all in the same project. 
-
-First you'll need to install the RPostgreSQL package. R packages are collections of code that other people have written; the RPostgreSQL package is a set of code for connecting to PostgreSQL databases, like the direct access database. 
-
-
-## Dataframes
-
-So, the data is in 'data' and is loaded into the workspace. Let's look a little bit at how R stores the data. 
-
-The str (short for structure) function is one of Rs most useful functions. Let's check out the structure of 'data'.
-
-```{r}
-
-
-str(data)
-```
-
-So, the first thing it tells us is that 'data' is a data frame. This is R's default way of storing data and is a little like a table in SQL or a sheet in Excel.
-
-It tells us we have 13,554 observations of 5 variables and then it gives us a bit more information about each of those variables including the variable's name, it's type and the first few observations for that variable.
-
-We can see the data in more detail using View. This will bring up a separate window in R studio with the data in tabular form. 
-
-```{r}
-View(data)
-```
 
 ## What is the average amount of currency spent? 
 

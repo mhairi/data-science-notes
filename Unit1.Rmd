@@ -5,6 +5,12 @@ date: "17 June 2016"
 output: word_document
 ---
 
+# Order of Units One and Two
+
+Unit's one and two can be done in either order. Very roughly this unit covers inferential statistics and the second unit covers working with data in R.  Indeed it may be a good idea to work on both units simultanously as they are using quite different skills. If you find you are struggling with the maths in this first unit switch to learning programming in the second unit. If you want to do less programming switch from the second unit to the first. 
+
+This unit also covers the very bare-bones of what is needed to do statistics in R. Because the units can be done in either order there is some repetition in the R content so certain parts of are included as supplamentary chapters. These chapters can be done at the relavent time when working though either unit - I'll let you know when you need to do them. Once you've worked though one unit there's no need to compleate the supplamentary chapter again. Although, if you struggled with the material the first time round and think some repistion would help please try the chapter again.
+
 # What is data?
 
 What isn't data? Any piece of information about the world is potentially data. The prices on a menu is data; the gender of your 5 closest friends is data; a book is data; a picture of your cat is data; the goals scored by your favourite team is data; a conversation is data. 
@@ -66,153 +72,9 @@ You'll notice that we have lots of bits of information we can measure about each
   4. Poll makers spend a lot of time trying to get a representative sample of the population to answer their questions. But it is difficult. In the last election they think that they under-sampled people who were at work during the time the phone polls and door to door polls were done. 
 
 
-
-# Working with R
-
-To analyse numeric and categorical data we are going to use a programming language called R. You might have used a point-and-click interface for analysing data before like Excel, SPSS or Minitab. Using R is somewhat similar to these programmes but also somewhat different. The biggest difference is that you'll be typing commands rather than clicking on boxes and menus. At first this is more difficult but will almost certainly become quicker and easier in the long run. 
-
-There's a bit of debate about what software you should use to analyse data. Every way of doing it has advantages and disadvantages. We'll be using R in this course because:
-
-  1. When you type everything you have a written record of everything you've done to a piece of data. This makes it easier to check your logic and the preserve the original data. 
-  2. You will often need to do the same piece of analysis over and over on different datasets. Having the code to do the analysis written out makes it easy to repeat.
-  3. R is free and open source. 
-  4. R has a lot of excellent libraries (downloadable extensions to R) which make generating plots, doing specialised techniques, making reports and even producing interactive dashboards easy. 
-
-If you've learnt to programme before, that's great. I'm sure you will find learning R straightforward. There are a few idiosyncratic features of R that can trip up experienced programmers. You might find this guide useful: http://www.johndcook.com/blog/r_language_for_programmers/
-
-If you've never done programming before that is also great. R is a good language for a beginner and once you've learnt R it will be much easier to pick up other languages, which opens up a huge range of things you can do with computers! 
-
-### Installing R
-
-We are going to install R the programming language. R is programme that actually does the analysis - you interact with this programme by typing R commands. For example, if you type `2 + 2`, R will do the maths and return the result to you. 
-
-Then we are going to install an IDE (interactive development environment) called RStudio. RStudio is a very popular way of interacting with R. While you don't need it to write R code RStudio makes it easy to do things like:
-1. Write longer pieces of code and get R to run it piece by piece.
-2. Keep track of what data R knows about.
-3. Organise all your R code files.
-4. See plots and tables you've created in R.
-5. Make special types of R files e.g. reports, dashboards etc.
-6. Access R's in-built help
-7. Manage which R packages (extensions to R) you have installed. 
-
-R is free and open source. It is written by volunteers and all the all packages you'll use were also written by volunteers.
-
-RStudio is also free and open source, but is made by a profit making company. They make their money by selling a professional version of RStudio that runs on a sever and has support.
-
-[Videos here]
-
-### Getting started.
-
-Once you have RStudio installed and opened you should see four panels. We'll ignore the two right-hand-side panels for just now. 
-
-The bottom-left panel is the R interpreter. We can type R commands into the interpreter and R will do some calculations and return an answer. Let's start with one of the most basic commands possible. Let's get R to add 2 and 2. Type `2 + 2` into the interpreter and press enter. 
-
-You should see something like this:
-
-```{r}
-2 + 2
-```
-
-After you hit enter R understood the command and found the answer, returning it almost instantly to you. (The little [1] in front of the answer just means that there's only one element to the answer).
-
-Now, type the same thing in the top left panel. When you press enter here nothing will happen. The top left panel is basically just a very simple text editor like Notepad on windows or TextEdit on a Mac. You can absolutely write R code in a separate text editor and many people do. A big advantage of writing code inside RStudio is that it's very easy to transfer code from the editor to the R interpreter. Just move your cursor to the line with `2 + 2` and press ctrl and enter at the same time. Pressing cmd+enter also works on a Mac. The code you have written will now appear in the interpreter along with the answer.
-
-If you have a longer piece of code that goes across multiple lines you will need to highlight the lines and then press ctrl+enter. Try this just now after typing this in the top left editor.
-
-```{r}
-1 + 2 +
-4
-```
-
-You can save the code you have written in the text editor and come back to it at any time. Just go to **File** and then **Save As…**. When going through this unit keep everything you’ve written in the text editor saved. 
- 
-### Vectors
-
-A very important thing to understand about R is that it works with *vectors*. Vectors are a list of items. Often this will be a list of numbers, but we will also work with vectors of strings (in programming languages anything made up of letters is called a string) and vectors made up of True and False values. In R we call a vector of strings a character vector. A vector made up of only True and False is a logical vector. 
-
-There are other types of vector in R, but for just now we will only be working with numeric, character and logical vectors. To make a vector in R we surround the elements with `c(` and `)`. For example
-
-```{r}
-c(1, 4, 6, 3)
-```
-
-Below is an example of the three vectors types we will learn about.
-
-Numeric   | `c(2.2, 0.1, 5)`
-Character | `c('apple', 'pear', 'e')`
-Logical   | `c(TRUE, FALSE, FALSE)`
-
-### Exercise
-
-1. Create a numeric vector containing this data: 10, 11, 11, 14. (Type in the text editor and use ctrl+enter to send to the interpreter)
-2. Create a character vector containing this data: 'small', 'small', 'small', 'large'.
-
-### Assignment
-
-Creating a vector isn't very useful if we can't store that vector somewhere. In a programming language if we want to store some data, or the results of a calculation we use assignment. Assignment is basically giving a name to a piece of data. If we want to use that data we can just find it by using its name, rather than typing out the data again. 
-
-In R we can assign using an arrow. Here’s an example of assigning the name x to a vector:
-
-```{r}
-x <- c(1, 4, 6, 3)
-```
-
-Now we've assigned a vector to x we can see what x is at any point by just typing x into the interpreter.
-
-```{r}
-x
-```
-
-Here we have been giving names to vectors but we can give a name to any type of R object. Here's how we would assign a name to a number:
-
-```{r}
-days <- 5
-```
-
-We can also give names to more complicated objects which will will see later.
-
-Names in R can only contain letters, numbers, '.' and '_'. They can't start with a number or an underline. Try to make names descriptive, so that when you go back to a piece of analysis you should be able to understand what everything is. Since you can't have spaces in names you can use the underscore character as a space: 
-
-```{r}
-days_until_launch <- 5
-```
-
-### Exercise
-
-1. Give the numeric vector we created earlier the name `height`.
-2. Give the character vector the name `height_category`.
-
-### The difference between 'apple' and apple
-
-A very common point of confusion for new programmers is the difference between a string like `'apple'` and a name like `apple`. 
-
-First first `'apple'` with quotes is simply a piece of data. If we type this into the interpreter R sees a new string we have created.
-
-```{r}
-'apple'
-```
-
-The second is a name given to an object. Since we haven’t called anything `apple` yet R doesn't know anything about `apple`.
-
-```{r, error = TRUE}
-apple
-```
-
-Another way of putting it is that `'apple'` is something that gets given a name:
-
-```{r}
-fruit <- 'apple'
-```
-
-And `apple` is a name that you can give to data:
-
-```{r}
-apple <- TRUE
-```
-
-Now you've understood the basics of R, we can begin analysing some data. Starting with some very basic, small data we'll discover ways the data can visualised and summarised which will help us understand it better and answer questions we have about the data. 
-
 # Visualising Data
+
+At this point, if you haven't already done so, please go though the supplamentary unit 1 on using R. We're about to get stuck in with analysing some data in R and if you havne't covered the basics of R you'll soon be stuck.
 
 ## Bar plots
 
@@ -220,7 +82,7 @@ Here's an example of a piece of data. You asked 15 people how much they liked sp
 
 0,  1, -3,  0, -2,  0, -3,  1,  0, -3, -3,  3,  3,  0,  2
 
-Create a vector in R containing the data above. Assign the name `spinach_rating` to it. 
+Open up R and RStudio. Create a vector in R containing the data above. Assign the name `spinach_rating` to it. 
 
 ```{r, include = FALSE}
 spinach_rating <- c(0,  1, -3,  0, -2,  0, -3,  1,  0, -3, -3,  3,  3,  0,  2)
@@ -247,6 +109,24 @@ barplot(spinach_table)
 ``` 
 
 It's very easy to go from a raw list of numbers to a picture that gives us a very clear overview of the numbers. We can now make some conclusions about the the data: of our 15 respondents most people were neutral on spinach or hated it, although 4 out of the 15 gave spinach an overall positive rating.  
+
+
+## Functions
+
+In the code above we used two functions from R: `table` and `barplot`. A function is anything that takes an input and returns an output. 
+
+The `table` function took our vector of data as an input and transformed it into an table.
+
+The `barplot` function took in a table and transformed it into plot. 
+
+We'll be using a lot of functions, and later we'll even be writing our own functions. They will all follow the same basic pattern of taking in an input and returning an output. We also always write them like this, with the input going in brackets after the name of the function:
+
+```{r, eval = FALSE}
+some_function(some_input)
+```
+
+The output is normally a new R object, like the table we created above and assigned to `spinach_table`. But we can also have other types of output - like the plot we saw. 
+
 
 ## Histograms
 
@@ -474,105 +354,13 @@ A. 1. No information lost. Not very easy to understand.
 
 3. Easy to understand overview of the data. Can often show us the shape of the data well. But information may be lost and it can be difficult to get raw numbers out.
 
-# Dataframes in R
+# Data subsets
 
-Throughout this unit we have been using the spinach survey data very frequently. It might make sense to keep all this data together in one R object. After all, the spinach rating, and the heights and the chocolate ratings all come from the same people. So it probably makes sense to have this data linked together somehow. 
-
-In R we can link several vectors together by using a *dataframe*. This is very useful when we have data in the form of multiple variables of certain observations. In our spinach data each observation is a survey respondent, and each variable is some fact about them. 
-
-To link data together we use the function `data.frame`. This takes in multiple vectors of data and converts them into a special data frame object:
-
-```{r}
-height <- c(133, 110, 224, 134, 135, 136, 125, 137, 104, 132, 114, 130, 129, 237, 131)
-spinach_rating <- c(0,  1, -3,  0, -2,  0, -3,  1,  0, -3, -3,  3,  3,  0,  2)
-chocolate_rating <- c(3, 3, 0, 3, -3, 3, 0, 2, 2, 2, 3, 3, 2, 3, 1)
-
-data.frame(height, spinach_rating, chocolate_rating)
-```
-
-Let's give this object a name, so that we can easily access it later. It is a good idea to give dataframes descriptive names like `rating_and_height_data` or `spinach_data`. However, if you are only going to be working with one dataframe it's fine to call it `df` (short for data-frame) because it saves typing.
-
-```{r}
-df <- data.frame(height, spinach_rating, chocolate_rating)
-```
-
-All the vectors being linked together must be the same length. Dataframes are primary used for linking observation/variable data together. In this situation it doesn't make sense to have a different number of observations for different variables.
-
-## Working with dataframes
-
-If we want to access the individual vectors in a dataframe we need to tell R where that vector is (it's inside a dataframe). We do this using the `$` operator. 
-
-```{r}
-df$height
-```
-
-`df$heigth` means the vector named `height` inside the dataframe `df`. Every time you use the height vector you will need to use `df$height`. For example:
-
-```{r}
-hist(df$height)
-```
-
-Keeping objects in dataframes and accessing them using `$` does seem awkward at first. However, it is often useful in the long run for three reasons:
-
-  1. You will often be working with multiple datasets at the same time it can get confusing working out which dataset each variable is associated with.
-  
-  2. Later we be learning about some R libraries (dplyr and ggplot2) which are designed to work well with dataframes. You really need to have your data in dataframes to use these libraries effectively and in turn they make working with dataframes easier. 
-  
-  3. Most data gets read into R in the form of a dataframe.
-  
-If we want to add an extra vector to our dataframe we can just assign to a name in that dataframe directly. 
-
-```{r}
-df$age <- c("Adult", "Child", "Adult", "Adult", "Child", "Adult", "Child", 
-         "Adult", "Child", "Child", "Child", "Adult", "Adult", "Adult", 
-         "Adult")
-```
-
-Deleting a vector from a data frame can just be done by setting the vector to null.
-
-```{r}
-df$age <- NULL
-```
-
-A very useful function in R is `str`. It gives you a string representation of what is in an object. Using it on a dataframe will give you a compact description of all the vectors in that dataframe.
-
-```{r}
-str(df)
-```
-
-The 'Environment' panel on the top right in RStudio will also give you the descriptions from `str` if you click on the triangle next to a dataframe. You can also view the entire dataframe by using `View` (or by clicking on the name of a dataframe in the Environment panel). This is useful if you are familiar with working in Excel, and like to be able to see the data you are working with.
-
-```{r}
-View(df)
-```
-
-Unlike Excel you cannot edit a file from the view mode - although this is a good thing because you can't accidently mess up for data! 
-
-## Reading external data
-  
-Almost all data you work with in R will be read in from an external file (typing out all your data into vectors get difficult very quickly!). We will now read in an extended version of our spinach data. We will be using this data throughout the rest of the unit.
-
-The file is in the form of a CSV (comma separated value file). This is the most common form of text data, and is a very good choice saving data. If you open up the data in a text editor you will be able to see that each variable is separated by a comma and each new observation goes on a new row. This form of data is easy for lots of different programs to use so makes it a very good choice when you need to store data. 
-
-To read in a CSV file just use the R function `read.csv`. You will need to find where your CSV file is stored on your computer and copy the file path (don't worry if you are struggling to find the file path, we will cover an easier way soon). 
-
-```{r, eval = FALSE}
-df <- read.csv('C://path//to//data//spinich_data.csv')
-```
-
-Having to type out the full path to your data gets tedious very quickly. It also makes it more difficult to share your work, because other people will have a different path to their data, so will need to manually edit all file paths.
-
-A good solution is to use projects inside RStudio. For each project RStudio creates a little file that tells RStudio that all the code and data we need is contained in one folder. Creating one is easy. Make sure you have the code and the csv file in the same folder in your computer. I'd recommend making a new folder with just those two files. Then in RStudio go to 'File', then 'New Project...'. Chose the make a project in an existing directory and chose the location of the directory with your code and spinach data file.
-
-Now when you want to read in the data RStudio knows that the data is in the same place as your code and this will work:
+Before continuing make sure you can done the supplamentary chapter on data frames in R. We will be using the spinach data-frame that we read in in that chapter.
 
 ```{r}
 df <- read.csv('spinach_data.csv')
 ```
-
-Also, the 'Files' window in the bottom right in RStudio will now show you all the files you have in your project's folder. 
-
-# Data subsets
 
 ## Numeric subsets
 

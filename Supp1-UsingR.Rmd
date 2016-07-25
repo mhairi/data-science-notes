@@ -113,6 +113,21 @@ Names in R can only contain letters, numbers, '.' and '_'. They can't start with
 days_until_launch <- 5
 ```
 
+
+You might also see people make names like this:
+  
+  ```{r}
+daysUntilLaunch <- 5
+```
+
+Which is totally fine, as long as you are consistent in your naming style. Some R users create names like this:
+  
+  ```{r}
+days.until.launch <- 5
+```
+
+Which is again fine, although less recommended because many other languages won't let you use `.` in a name, so that could be potentially confusing for people reading your code who know other languages.  
+
 ### Exercise
 
 1. Give the numeric vector we created earlier the name `height`.
@@ -146,21 +161,6 @@ And `apple` is a name that you can give to data:
 apple <- TRUE
 ```
 
-You might also see people make names like this:
-  
-  ```{r}
-daysUntilLaunch <- 5
-```
 
-Which is totally fine, as long as you are consistent in your naming style. Some R users create names like this:
-  
-  ```{r}
-days.until.launch <- 5
-```
-
-Which is again fine, although less recommended because many other languages won't let you use `.` in a name, so that could be potentially confusing for people reading your code who know other languages.  
-
-
-Now you've understood the basics of R, we can begin analysing some data. Starting with some very basic, small data we'll discover ways the data can visualised and summarised which will help us understand it better and answer questions we have about the data. 
 
 
